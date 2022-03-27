@@ -34,8 +34,21 @@ function callWeatherAPI() {
  * function to pull the latitude and longitude of the user input city.
  * uses openweathermap geocoding API.  Defaults to Seattle
  */
-function getLatLon(city = 'Seattle', state = 'WA', country = 'US') {
-  geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},${country}&limit=5&appid=3eff72afc8e025ad160e5e93b1fd826d`;
+function getLatLon(city, state, country) {
+  let searchString = '';
+  if (!city) {
+    console.log('no city provided'); // add some message to user at this point, to handle the error
+    return;
+  }
+  if (!state) {
+    state = '';
+  }
+  if (!country) {
+    country = '';
+  }
+  searchString = `${city},${state},${country}`;
+
+  let geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${searchString}&limit=1&appid=3eff72afc8e025ad160e5e93b1fd826d`;
   console.log(geoUrl);
   fetch(geoUrl)
     .then(function (response) {
@@ -47,7 +60,7 @@ function getLatLon(city = 'Seattle', state = 'WA', country = 'US') {
       buildURL(data[0].lat, data[0].lon);
     });
 }
-getLatLon('Chicago', 'IL');
+getLatLon('portland');
 
 function displayCurrentIcon() {
   let currentIconValue = currentWeatherObj.current.weather[0].icon;
