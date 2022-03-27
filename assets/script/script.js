@@ -12,6 +12,7 @@ let currentWeatherObj;
  */
 function buildURL(lat = 47.61, lon = -122.33) {
   weatherAPIURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=3eff72afc8e025ad160e5e93b1fd826d&units=imperial`;
+  callWeatherAPI();
 }
 
 /**
@@ -20,8 +21,6 @@ function buildURL(lat = 47.61, lon = -122.33) {
 function callWeatherAPI() {
   fetch(weatherAPIURL)
     .then(function (response) {
-      console.log(response);
-      console.log(response.json);
       return response.json();
     })
     .then(function (data) {
@@ -30,6 +29,25 @@ function callWeatherAPI() {
       init();
     });
 }
+
+/**
+ * function to pull the latitude and longitude of the user input city.
+ * uses openweathermap geocoding API.  Defaults to Seattle
+ */
+function getLatLon(city = 'Seattle', state = 'WA', country = 'US') {
+  geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},${country}&limit=5&appid=3eff72afc8e025ad160e5e93b1fd826d`;
+  console.log(geoUrl);
+  fetch(geoUrl)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      console.log(data);
+      console.log(data[0].lat);
+      buildURL(data[0].lat, data[0].lon);
+    });
+}
+getLatLon('Chicago', 'IL');
 
 function displayCurrentIcon() {
   let currentIconValue = currentWeatherObj.current.weather[0].icon;
@@ -47,5 +65,5 @@ function init() {
   displayCurrentIcon();
 }
 
-buildURL();
-callWeatherAPI();
+// buildURL();
+// callWeatherAPI();
