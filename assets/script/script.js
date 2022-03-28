@@ -2,6 +2,10 @@
 let weatherAPIURL;
 let currentWeatherObj;
 
+// Defines Global Variables for DOM elements that need handling
+const submitBtn = document.querySelector('#submitBtn');
+const searchText = document.querySelector('#cityInput');
+
 // defines functions
 
 /**
@@ -60,7 +64,7 @@ function getLatLon(city, state, country) {
       buildURL(data[0].lat, data[0].lon);
     });
 }
-getLatLon('portland');
+// getLatLon('seattle', 'washington', 'united');
 
 function displayCurrentIcon() {
   let currentIconValue = currentWeatherObj.current.weather[0].icon;
@@ -77,6 +81,19 @@ function displayCurrentIcon() {
 function init() {
   displayCurrentIcon();
 }
+
+// Defines event listeners
+submitBtn.addEventListener('click', function (event) {
+  event.preventDefault();
+  let formInput = searchText.value;
+  console.log(formInput);
+  formInput = formInput.split(' ');
+  console.log(formInput[0]);
+  console.log(formInput[1]);
+  console.log(formInput[2]);
+  console.log(formInput);
+  getLatLon(formInput[0], formInput[1], formInput[2]);
+});
 
 // buildURL();
 // callWeatherAPI();
