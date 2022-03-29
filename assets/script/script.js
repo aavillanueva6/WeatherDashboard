@@ -29,8 +29,14 @@ function callWeatherAPI() {
     })
     .then(function (data) {
       currentWeatherObj = data;
+      localStorage.setItem('weatherObj', JSON.stringify(data));
       console.log(currentWeatherObj);
       init();
+      timeConverter(data.current.dt);
+    })
+    .catch(function (error) {
+      console.log(error);
+      return;
     });
 }
 
@@ -62,11 +68,26 @@ function getLatLon(city, state, country) {
       console.log(data);
       console.log(data[0].lat);
       buildURL(data[0].lat, data[0].lon);
+    })
+    .catch(function (error) {
+      console.log(error);
+      init();
+      return;
     });
 }
 // getLatLon('seattle', 'washington', 'united');
 
 function displayCurrentIcon() {
+  // TODO the line between these comments needs to be deleted later.  Added for testing with saved weather data in LS.
+  let currentWeatherObj = JSON.parse(localStorage.getItem('weatherObj'));
+  console.log(currentWeatherObj);
+  console.log('unix time: ', currentWeatherObj.current.dt);
+  console.log('temperature: ', currentWeatherObj.current.temp);
+  console.log('wind speed: ', currentWeatherObj.current.wind_speed);
+  console.log('humidity: ', currentWeatherObj.current.humidity);
+  console.log('UV Index: ', currentWeatherObj.current.uvi);
+  // TODO the line between these comments needs to be deleted later.  Added for testing with saved weather data in LS.
+
   let currentIconValue = currentWeatherObj.current.weather[0].icon;
   console.log(currentIconValue);
   let iconURL = `https://openweathermap.org/img/wn/${currentIconValue}@2x.png`;
@@ -80,6 +101,34 @@ function displayCurrentIcon() {
  */
 function init() {
   displayCurrentIcon();
+  timeConverter(1648584000);
+}
+
+/**
+ *function takes timestamp in Unix time and returns formatted day, month, year for displaying to user.
+ */
+function timeConverter(unixTime) {
+  let jsTime = new Date(unixTime * 1000);
+  let months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  let year = jsTime.getFullYear();
+  let month = months[jsTime.getMonth()];
+  let date = jsTime.getDate();
+  console.log(year);
+  console.log(month);
+  console.log(date);
 }
 
 // Defines event listeners
@@ -87,7 +136,11 @@ submitBtn.addEventListener('click', function (event) {
   event.preventDefault();
   let formInput = searchText.value;
   console.log(formInput);
+  // formInput = formInput.split(',');
   formInput = formInput.split(' ');
+  formInput.forEach((element) => {
+    let elementArray = element.split;
+  });
   console.log(formInput[0]);
   console.log(formInput[1]);
   console.log(formInput[2]);
