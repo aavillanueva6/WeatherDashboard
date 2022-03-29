@@ -4,3 +4,11 @@ h1 {
   font-size: 64px;
   text-align: center;
 }
+
+body {
+  background-color: #aaaaaa;
+}
+
+.forecastBlock {
+  background-color: navy;
+}
