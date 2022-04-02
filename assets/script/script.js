@@ -1,10 +1,13 @@
 // Defines Global Variables
 let weatherAPIURL;
 let currentWeatherObj;
+let currentCity;
 
 // Defines Global Variables for DOM elements that need handling
 const submitBtn = document.querySelector('#submitBtn');
 const searchText = document.querySelector('#cityInput');
+const currentWeatherDiv = document.querySelector('#currentWeatherDiv');
+const forecastDiv = document.querySelector('#forecastDiv');
 
 // defines functions
 
@@ -32,7 +35,12 @@ function callWeatherAPI() {
       localStorage.setItem('weatherObj', JSON.stringify(data));
       console.log(currentWeatherObj);
       init();
-      timeConverter(data.current.dt);
+      let dateString = timeConverter(data.current.dt);
+      console.log(dateString);
+      printCurrentWeather(data.current);
+      for (let i = 0; i < 5; i++) {
+        printForecast(data.daily[i]);
+      }
     })
     .catch(function (error) {
       console.log(error);
@@ -66,7 +74,11 @@ function getLatLon(city, state, country) {
     })
     .then(function (data) {
       console.log(data);
-      console.log(data[0].lat);
+      currentCity = `${data[0].name}, ${data[0].state}:`;
+      let cityNameSpans = document.querySelectorAll('.cityName');
+      cityNameSpans.forEach((element) => {
+        element.textContent = currentCity;
+      });
       buildURL(data[0].lat, data[0].lon);
     })
     .catch(function (error) {
@@ -75,7 +87,6 @@ function getLatLon(city, state, country) {
       return;
     });
 }
-// getLatLon('seattle', 'washington', 'united');
 
 function displayCurrentIcon() {
   // TODO the line between these comments needs to be deleted later.  Added for testing with saved weather data in LS.
@@ -100,8 +111,37 @@ function displayCurrentIcon() {
  * function to initialize the page.  Runs all necessary functions using default values.
  */
 function init() {
-  displayCurrentIcon();
+  // displayCurrentIcon();
   timeConverter(1648584000);
+}
+
+function printCurrentWeather(weatherObj) {
+  console.log(weatherObj);
+  // build out DOM elements for current weather
+  let todayCard = document.createElement('div');
+  todayCard.classList.add('card', 'bg-light', 'text-dark', 'mb-3', 'p-3');
+  let cardHeader = document.createElement('h3');
+  cardHeader.classList.add();
+  let iconURL = `https://openweathermap.org/img/wn/${weatherObj.weather[0].icon}@2x.png`;
+  let dateString = timeConverter(weatherObj.dt);
+  cardHeader.innerHTML = `${currentCity} - ${dateString} <img src=${iconURL}>`;
+
+  // Append DOM elements
+  currentWeatherDiv.append(todayCard);
+  todayCard.append(cardHeader);
+}
+
+function printForecast(weatherObj) {
+  console.log(weatherObj);
+  // build out DOM elements for forecast
+  let forecastContainer = document.createElement('div');
+  forecastContainer.classList.add(
+    'card',
+    'bg-light',
+    'text-dark',
+    'mb-3',
+    'p-3'
+  );
 }
 
 /**
@@ -126,26 +166,17 @@ function timeConverter(unixTime) {
   let year = jsTime.getFullYear();
   let month = months[jsTime.getMonth()];
   let date = jsTime.getDate();
-  console.log(year);
-  console.log(month);
-  console.log(date);
+  console.log(`${date}/${month}/${year}`);
+  return `${date}/${month}/${year}`;
 }
 
 // Defines event listeners
 submitBtn.addEventListener('click', function (event) {
   event.preventDefault();
+  forecastDiv.textContent = '';
+  currentWeatherDiv.textContent = '';
   let formInput = searchText.value;
-  console.log(formInput);
-  // formInput = formInput.split(',');
-  formInput = formInput.split(' ');
-  formInput.forEach((element) => {
-    let elementArray = element.split;
-  });
-  console.log(formInput[0]);
-  console.log(formInput[1]);
-  console.log(formInput[2]);
-  console.log(formInput);
-  getLatLon(formInput[0], formInput[1], formInput[2]);
+  getLatLon(formInput);
 });
 
 // buildURL();
