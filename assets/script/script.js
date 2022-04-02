@@ -2,6 +2,11 @@
 let weatherAPIURL;
 let currentWeatherObj;
 let currentCity;
+if (JSON.parse(localStorage.getItem('searchHistory')) == null) {
+  var searchHistoryArray = [];
+} else {
+  var searchHistoryArray = JSON.parse(localStorage.getItem('searchHistory'));
+}
 
 // Defines Global Variables for DOM elements that need handling
 const submitBtn = document.querySelector('#submitBtn');
@@ -123,6 +128,12 @@ function saveSearchedCities(cityName, cityString, lat, lon) {
     cityLon: lon,
   };
   console.log(newCityObject);
+
+  searchHistoryArray.unshift(newCityObject);
+  if (searchHistoryArray.length > 10) {
+    searchHistoryArray.pop();
+  }
+  localStorage.setItem('searchHistory', JSON.stringify(searchHistoryArray));
 }
 
 function printCurrentWeather(weatherObj) {
