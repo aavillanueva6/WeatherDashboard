@@ -13,6 +13,7 @@ const submitBtn = document.querySelector('#submitBtn');
 const searchText = document.querySelector('#cityInput');
 const currentWeatherDiv = document.querySelector('#currentWeatherDiv');
 const forecastDiv = document.querySelector('#forecastDiv');
+const searchHistoryDiv = document.querySelector('#searchHistoryDiv');
 
 // defines functions
 
@@ -79,11 +80,7 @@ function getLatLon(city, state, country) {
     })
     .then(function (data) {
       console.log(data);
-      currentCity = `${data[0].name}, ${data[0].state}:`;
-      let cityNameSpans = document.querySelectorAll('.cityName');
-      cityNameSpans.forEach((element) => {
-        element.textContent = currentCity;
-      });
+      getCurrentCityString(data);
       buildURL(data[0].lat, data[0].lon);
       saveSearchedCities(data[0].name, currentCity, data[0].lat, data[0].lon);
     })
@@ -92,6 +89,14 @@ function getLatLon(city, state, country) {
       init();
       return;
     });
+}
+
+function getCurrentCityString(data) {
+  if (data[0].state) {
+    currentCity = `${data[0].name}, ${data[0].state}:`;
+  } else {
+    currentCity = `${data[0].name}, ${data[0].country}:`;
+  }
 }
 
 function displayCurrentIcon() {
@@ -115,8 +120,7 @@ function displayCurrentIcon() {
  * function to initialize the page.  Runs all necessary functions using default values.
  */
 function init() {
-  // displayCurrentIcon();
-  timeConverter(1648584000);
+  displaySearchHistory();
 }
 
 function saveSearchedCities(cityName, cityString, lat, lon) {
@@ -128,12 +132,38 @@ function saveSearchedCities(cityName, cityString, lat, lon) {
     cityLon: lon,
   };
   console.log(newCityObject);
+  let previouslySearched = false;
+  for (let i = 0; i < searchHistoryArray.length; i++) {
+    if (cityName === searchHistoryArray[i].city) {
+      previouslySearched = true;
+      break;
+    }
+  }
 
-  searchHistoryArray.unshift(newCityObject);
-  if (searchHistoryArray.length > 10) {
-    searchHistoryArray.pop();
+  if (!previouslySearched) {
+    searchHistoryArray.unshift(newCityObject);
+    if (searchHistoryArray.length > 10) {
+      searchHistoryArray.pop();
+    }
+  } else {
+    console.log('previously Searched');
   }
   localStorage.setItem('searchHistory', JSON.stringify(searchHistoryArray));
+  displaySearchHistory();
+}
+
+function displaySearchHistory() {
+  searchHistoryDiv.innerText = '';
+  // build out DOM elements for search history
+  searchHistoryArray.forEach((element) => {
+    let searchHistCard = document.createElement('div');
+    searchHistCard.classList.add('card', 'mb-1');
+    let searchHistCardBody = document.createElement('div');
+    searchHistCardBody.classList.add('card-body', 'p-2');
+    searchHistCardBody.innerText = element.city;
+    searchHistoryDiv.append(searchHistCard);
+    searchHistCard.append(searchHistCardBody);
+  });
 }
 
 function printCurrentWeather(weatherObj) {
@@ -254,5 +284,11 @@ submitBtn.addEventListener('click', function (event) {
   getLatLon(formInput);
 });
 
-// buildURL();
-// callWeatherAPI();
+searchHistoryDiv.addEventListener('click', function (event) {
+  forecastDiv.textContent = '';
+  currentWeatherDiv.textContent = '';
+  console.log(event.target);
+  getLatLon(event.target.innerText);
+});
+
+init();
