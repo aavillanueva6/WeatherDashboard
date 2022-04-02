@@ -109,9 +109,11 @@ function saveSearchedCities(cityName, cityString, lat, lon) {
     cityLon: lon,
   };
   let previouslySearched = false;
+  let indexOfCity;
   for (let i = 0; i < searchHistoryArray.length; i++) {
     if (cityName === searchHistoryArray[i].city) {
       previouslySearched = true;
+      indexOfCity = i;
       break;
     }
   }
@@ -122,7 +124,8 @@ function saveSearchedCities(cityName, cityString, lat, lon) {
       searchHistoryArray.pop();
     }
   } else {
-    console.log('previously Searched');
+    searchHistoryArray.splice(indexOfCity, 1);
+    searchHistoryArray.unshift(newCityObject);
   }
   localStorage.setItem('searchHistory', JSON.stringify(searchHistoryArray));
   displaySearchHistory();
@@ -254,6 +257,7 @@ submitBtn.addEventListener('click', function (event) {
   forecastDiv.textContent = '';
   currentWeatherDiv.textContent = '';
   let formInput = searchText.value;
+  searchText.value = '';
   getLatLon(formInput);
 });
 
