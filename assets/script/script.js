@@ -38,7 +38,7 @@ function callWeatherAPI() {
       let dateString = timeConverter(data.current.dt);
       console.log(dateString);
       printCurrentWeather(data.current);
-      for (let i = 0; i < 5; i++) {
+      for (let i = 1; i < 6; i++) {
         printForecast(data.daily[i]);
       }
     })
@@ -80,6 +80,7 @@ function getLatLon(city, state, country) {
         element.textContent = currentCity;
       });
       buildURL(data[0].lat, data[0].lon);
+      saveSearchedCities(data[0].name, currentCity, data[0].lat, data[0].lon);
     })
     .catch(function (error) {
       console.log(error);
@@ -99,9 +100,7 @@ function displayCurrentIcon() {
   console.log('UV Index: ', currentWeatherObj.current.uvi);
   // TODO the line between these comments needs to be deleted later.  Added for testing with saved weather data in LS.
 
-  let currentIconValue = currentWeatherObj.current.weather[0].icon;
-  console.log(currentIconValue);
-  let iconURL = `https://openweathermap.org/img/wn/${currentIconValue}@2x.png`;
+  let iconURL = `https://openweathermap.org/img/wn/${currentWeatherObj.current.weather[0].icon}@2x.png`;
   let iconEl = document.createElement('img');
   iconEl.setAttribute('src', iconURL);
   document.querySelector('#weatherIcon').appendChild(iconEl);
@@ -115,16 +114,34 @@ function init() {
   timeConverter(1648584000);
 }
 
+function saveSearchedCities(cityName, cityString, lat, lon) {
+  console.log(cityName, cityString, lat, lon);
+  let newCityObject = {
+    city: cityName,
+    cityState: cityString,
+    cityLat: lat,
+    cityLon: lon,
+  };
+  console.log(newCityObject);
+}
+
 function printCurrentWeather(weatherObj) {
   console.log(weatherObj);
   // build out DOM elements for current weather
   let todayCard = document.createElement('div');
-  todayCard.classList.add('card', 'bg-light', 'text-dark', 'mb-3', 'p-3');
-  let cardHeader = document.createElement('h3');
+  todayCard.classList.add(
+    'card',
+    'bg-secondary',
+    'text-dark',
+    'mb-3',
+    'me-1',
+    'p-3'
+  );
+  let cardHeader = document.createElement('h2');
   cardHeader.classList.add();
   let iconURL = `https://openweathermap.org/img/wn/${weatherObj.weather[0].icon}@2x.png`;
   let dateString = timeConverter(weatherObj.dt);
-  cardHeader.innerHTML = `${currentCity} ${dateString} <img src=${iconURL}>`;
+  cardHeader.innerHTML = `${currentCity} ${dateString} <img src=${iconURL} height='32px'>`;
   let tempP = document.createElement('p');
   let windP = document.createElement('p');
   let humidityP = document.createElement('p');
@@ -152,14 +169,43 @@ function printCurrentWeather(weatherObj) {
 function printForecast(weatherObj) {
   console.log(weatherObj);
   // build out DOM elements for forecast
-  let forecastContainer = document.createElement('div');
-  forecastContainer.classList.add(
+  let forecastCard = document.createElement('div');
+  forecastCard.classList.add(
     'card',
-    'bg-light',
-    'text-dark',
+    'bg-dark',
+    'text-white',
     'mb-3',
-    'p-3'
+    'me-1',
+    'p-2',
+    'rounded'
   );
+  let cardBody = document.createElement('div');
+  cardBody.classList.add('card-body', 'p-0');
+  let cardTitle = document.createElement('div');
+  cardTitle.classList.add('card-title');
+  let iconImg = document.createElement('img');
+  let tempP = document.createElement('p');
+  let windP = document.createElement('p');
+  let humidityP = document.createElement('p');
+
+  // call time converter to get date string
+  let dateString = timeConverter(weatherObj.dt);
+
+  //add text/images to DOM elements in card
+  cardTitle.innerText = dateString;
+  iconImg.setAttribute(
+    'src',
+    `https://openweathermap.org/img/wn/${weatherObj.weather[0].icon}@2x.png`
+  );
+  iconImg.setAttribute('height', '32px');
+  tempP.innerText = `Temp:      ${weatherObj.temp.day} °F`;
+  windP.innerText = `Wind:      ${weatherObj.wind_speed} MPH`;
+  humidityP.innerText = `Humidity:  ${weatherObj.humidity} %`;
+
+  //append items to DOM
+  forecastDiv.append(forecastCard);
+  forecastCard.append(cardBody);
+  cardBody.append(cardTitle, iconImg, tempP, windP, humidityP);
 }
 
 /**

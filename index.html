@@ -44,9 +44,9 @@
   </head>
   <body>
     <h1>Weather Dashboard</h1>
-    <main class="container">
+    <main class="container-fluid">
       <div class="row">
-        <aside class="col-3">
+        <aside class="col-2">
           <form>
             <input
               type="text"
@@ -54,20 +54,23 @@
               id="cityInput"
               required
               autocomplete="off"
-              value="Seattle"
+              placeholder="Seattle"
+              class="form-control"
             />
-            <input type="submit" value="Search" id="submitBtn" />
+            <button type="submit" class="btn btn-dark" id="submitBtn">
+              Search
+            </button>
           </form>
+          <hr />
+          <div>
+            <div>seattle</div>
+            <div>seattle</div>
+            <div>seattle</div>
+          </div>
         </aside>
-        <section class="col-9 container">
-          <div class="row col-12" id="currentWeatherDiv">
-            <h2>Current Weather In <span class="cityName"></span></h2>
-            <h1 id="weatherIcon"></h1>
-            <div></div>
-          </div>
-          <div class="row" id="forecastDiv">
-            <h2>Five Day Forecast For <span class="cityName"></span></h2>
-          </div>
+        <section class="col-10 container-fluid">
+          <div class="row col-12" id="currentWeatherDiv"></div>
+          <div class="row col-12 card-group" id="forecastDiv"></div>
         </section>
       </div>
     </main>
