@@ -39,10 +39,7 @@ function callWeatherAPI() {
     .then(function (data) {
       currentWeatherObj = data;
       localStorage.setItem('weatherObj', JSON.stringify(data));
-      console.log(currentWeatherObj);
       init();
-      let dateString = timeConverter(data.current.dt);
-      console.log(dateString);
       printCurrentWeather(data.current);
       for (let i = 1; i < 6; i++) {
         printForecast(data.daily[i]);
@@ -73,13 +70,11 @@ function getLatLon(city, state, country) {
   searchString = `${city},${state},${country}`;
 
   let geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${searchString}&limit=1&appid=3eff72afc8e025ad160e5e93b1fd826d`;
-  console.log(geoUrl);
   fetch(geoUrl)
     .then(function (response) {
       return response.json();
     })
     .then(function (data) {
-      console.log(data);
       getCurrentCityString(data);
       buildURL(data[0].lat, data[0].lon);
       saveSearchedCities(data[0].name, currentCity, data[0].lat, data[0].lon);
@@ -99,23 +94,6 @@ function getCurrentCityString(data) {
   }
 }
 
-function displayCurrentIcon() {
-  // TODO the line between these comments needs to be deleted later.  Added for testing with saved weather data in LS.
-  let currentWeatherObj = JSON.parse(localStorage.getItem('weatherObj'));
-  console.log(currentWeatherObj);
-  console.log('unix time: ', currentWeatherObj.current.dt);
-  console.log('temperature: ', currentWeatherObj.current.temp);
-  console.log('wind speed: ', currentWeatherObj.current.wind_speed);
-  console.log('humidity: ', currentWeatherObj.current.humidity);
-  console.log('UV Index: ', currentWeatherObj.current.uvi);
-  // TODO the line between these comments needs to be deleted later.  Added for testing with saved weather data in LS.
-
-  let iconURL = `https://openweathermap.org/img/wn/${currentWeatherObj.current.weather[0].icon}@2x.png`;
-  let iconEl = document.createElement('img');
-  iconEl.setAttribute('src', iconURL);
-  document.querySelector('#weatherIcon').appendChild(iconEl);
-}
-
 /**
  * function to initialize the page.  Runs all necessary functions using default values.
  */
@@ -124,14 +102,12 @@ function init() {
 }
 
 function saveSearchedCities(cityName, cityString, lat, lon) {
-  console.log(cityName, cityString, lat, lon);
   let newCityObject = {
     city: cityName,
     cityState: cityString,
     cityLat: lat,
     cityLon: lon,
   };
-  console.log(newCityObject);
   let previouslySearched = false;
   for (let i = 0; i < searchHistoryArray.length; i++) {
     if (cityName === searchHistoryArray[i].city) {
@@ -167,7 +143,6 @@ function displaySearchHistory() {
 }
 
 function printCurrentWeather(weatherObj) {
-  console.log(weatherObj);
   // build out DOM elements for current weather
   let todayCard = document.createElement('div');
   todayCard.classList.add(
@@ -208,7 +183,6 @@ function printCurrentWeather(weatherObj) {
 }
 
 function printForecast(weatherObj) {
-  console.log(weatherObj);
   // build out DOM elements for forecast
   let forecastCard = document.createElement('div');
   forecastCard.classList.add(
@@ -271,7 +245,6 @@ function timeConverter(unixTime) {
   let year = jsTime.getFullYear();
   let month = months[jsTime.getMonth()];
   let date = jsTime.getDate();
-  console.log(`${date}/${month}/${year}`);
   return `${date}/${month}/${year}`;
 }
 
@@ -287,7 +260,6 @@ submitBtn.addEventListener('click', function (event) {
 searchHistoryDiv.addEventListener('click', function (event) {
   forecastDiv.textContent = '';
   currentWeatherDiv.textContent = '';
-  console.log(event.target);
   getLatLon(event.target.innerText);
 });
 
