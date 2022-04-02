@@ -124,11 +124,29 @@ function printCurrentWeather(weatherObj) {
   cardHeader.classList.add();
   let iconURL = `https://openweathermap.org/img/wn/${weatherObj.weather[0].icon}@2x.png`;
   let dateString = timeConverter(weatherObj.dt);
-  cardHeader.innerHTML = `${currentCity} - ${dateString} <img src=${iconURL}>`;
+  cardHeader.innerHTML = `${currentCity} ${dateString} <img src=${iconURL}>`;
+  let tempP = document.createElement('p');
+  let windP = document.createElement('p');
+  let humidityP = document.createElement('p');
+  let UVIP = document.createElement('p');
+  tempP.innerText = `Temp:      ${weatherObj.temp} °F`;
+  windP.innerText = `Wind:      ${weatherObj.wind_speed} MPH`;
+  humidityP.innerText = `Humidity:  ${weatherObj.humidity} %`;
+  UVIP.innerHTML = `UV Index:  <span id='UVIndex'>${weatherObj.uvi}</span>`;
 
   // Append DOM elements
   currentWeatherDiv.append(todayCard);
-  todayCard.append(cardHeader);
+  todayCard.append(cardHeader, tempP, windP, humidityP, UVIP);
+
+  // set color for UV Index
+  let UVSpan = document.querySelector('#UVIndex');
+  if (weatherObj.uvi < 2) {
+    UVSpan.classList.add('text-white', 'bg-success');
+  } else if (weatherObj.uvi < 8) {
+    UVSpan.classList.add('text-dark', 'bg-warning');
+  } else {
+    UVSpan.classList.add('text-white', 'bg-danger');
+  }
 }
 
 function printForecast(weatherObj) {
