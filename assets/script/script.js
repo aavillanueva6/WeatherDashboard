@@ -1,6 +1,4 @@
 // Defines Global Variables
-let weatherAPIURL;
-let currentWeatherObj;
 let currentCity;
 if (JSON.parse(localStorage.getItem('searchHistory')) == null) {
   var searchHistoryArray = [];
@@ -21,23 +19,22 @@ const searchHistoryDiv = document.querySelector('#searchHistoryDiv');
  * function to create the API call URL using the latitude and longitude of the requested city
  * @param {number} lat The latitude of the requested city
  * @param {number} lon The longitude of the requested city
- * default is Seattle (47.61, -122.33)
  */
-function buildURL(lat = 47.61, lon = -122.33) {
-  weatherAPIURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=3eff72afc8e025ad160e5e93b1fd826d&units=imperial`;
-  callWeatherAPI();
+function buildURL(lat, lon) {
+  callWeatherAPI(
+    `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=3eff72afc8e025ad160e5e93b1fd826d&units=imperial`
+  );
 }
 
 /**
  * function to pull the current weather and forecast from api.openweathermap.org
  */
-function callWeatherAPI() {
+function callWeatherAPI(weatherAPIURL) {
   fetch(weatherAPIURL)
     .then(function (response) {
       return response.json();
     })
     .then(function (data) {
-      currentWeatherObj = data;
       localStorage.setItem('weatherObj', JSON.stringify(data));
       init();
       forecastDiv.innerHTML = `<p>Five Day Forecast for ${currentCity}</p>`;
