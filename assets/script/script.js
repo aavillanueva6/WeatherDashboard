@@ -40,6 +40,8 @@ function callWeatherAPI() {
       currentWeatherObj = data;
       localStorage.setItem('weatherObj', JSON.stringify(data));
       init();
+      forecastDiv.innerHTML = `<p>Five Day Forecast for ${currentCity}</p>`;
+      currentWeatherDiv.textContent = '';
       printCurrentWeather(data.current);
       for (let i = 1; i < 6; i++) {
         printForecast(data.daily[i]);
@@ -120,7 +122,7 @@ function saveSearchedCities(cityName, cityString, lat, lon) {
 
   if (!previouslySearched) {
     searchHistoryArray.unshift(newCityObject);
-    if (searchHistoryArray.length > 10) {
+    if (searchHistoryArray.length > 9) {
       searchHistoryArray.pop();
     }
   } else {
@@ -136,7 +138,7 @@ function displaySearchHistory() {
   // build out DOM elements for search history
   searchHistoryArray.forEach((element) => {
     let searchHistCard = document.createElement('div');
-    searchHistCard.classList.add('card', 'mb-1');
+    searchHistCard.classList.add('card', 'mb-1', 'col-4', 'col-md-12');
     let searchHistCardBody = document.createElement('div');
     searchHistCardBody.classList.add('card-body', 'p-2');
     searchHistCardBody.innerText = element.city;
@@ -254,16 +256,12 @@ function timeConverter(unixTime) {
 // Defines event listeners
 submitBtn.addEventListener('click', function (event) {
   event.preventDefault();
-  forecastDiv.textContent = '';
-  currentWeatherDiv.textContent = '';
   let formInput = searchText.value;
   searchText.value = '';
   getLatLon(formInput);
 });
 
 searchHistoryDiv.addEventListener('click', function (event) {
-  forecastDiv.textContent = '';
-  currentWeatherDiv.textContent = '';
   getLatLon(event.target.innerText);
 });
 

@@ -43,33 +43,41 @@
     <link type="text/css" rel="stylesheet" href="./assets/styles/style.css" />
   </head>
   <body>
-    <h1>Weather Dashboard</h1>
-    <main class="container-fluid">
-      <div class="row">
-        <aside class="col-2">
-          <form>
-            <input
-              type="text"
-              name="cityInput"
-              id="cityInput"
-              required
-              autocomplete="off"
-              placeholder="Seattle"
-              class="form-control"
-            />
-            <button type="submit" class="btn btn-dark mt-1" id="submitBtn">
-              Search
-            </button>
-          </form>
-          <hr class="my-2" />
-          <div id="searchHistoryDiv"></div>
-        </aside>
-        <section class="col-10 container-fluid">
-          <div class="row col-12" id="currentWeatherDiv"></div>
-          <div class="row col-12 card-group" id="forecastDiv"></div>
-        </section>
+    <div id="pageContainer">
+      <div id="contentWrapper">
+        <h1 class="customGrad mb-3">Weather Dashboard</h1>
+        <main class="container-fluid">
+          <div class="row">
+            <aside class="col-12 col-md-2">
+              <form>
+                <input
+                  type="text"
+                  name="cityInput"
+                  id="cityInput"
+                  required
+                  autocomplete="off"
+                  placeholder="Seattle"
+                  class="form-control"
+                />
+                <button type="submit" class="btn btn-dark mt-1" id="submitBtn">
+                  Search
+                </button>
+              </form>
+              <hr class="my-2" />
+              <div
+                id="searchHistoryDiv"
+                class="row row-cols-1 row-cols-md-3"
+              ></div>
+            </aside>
+            <section class="col-12 col-md-10 container-fluid mx-auto">
+              <div class="row col-12 mx-auto" id="currentWeatherDiv"></div>
+              <div class="row col-12 card-group mx-auto" id="forecastDiv"></div>
+            </section>
+          </div>
+        </main>
       </div>
-    </main>
+      <footer>&copy; Alejandro Villanueva 2022</footer>
+    </div>
     <!-- TODO call in any third party <script> APIs here -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
