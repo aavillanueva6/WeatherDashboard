@@ -93,11 +93,12 @@ function init() {
 }
 
 /**
- * function to save the recent search history to LS.
+ * function to save the recent search history to LS. After saving to LS, it calls the displaySearchHistory function
  * @param {string} cityName   saves the city name that the user searched
  * @param {string} cityString   saves the cityString that is displayed to the user
  * @param {string} lat  saves the city's latitude
  * @param {string} lon  saves the city's longitude
+ * cityString, lat, and lon are currently not used.  Code could be optimized to use those instead of re-calling the getLatLon function on a saved city search.  This functionality is not in this release.
  */
 function saveSearchedCities(cityName, cityString, lat, lon) {
   let newCityObject = {
@@ -108,6 +109,7 @@ function saveSearchedCities(cityName, cityString, lat, lon) {
   };
   let previouslySearched = false;
   let indexOfCity;
+  // checks to see if the new city has already been added to the search history
   for (let i = 0; i < searchHistoryArray.length; i++) {
     if (cityName === searchHistoryArray[i].city) {
       previouslySearched = true;
@@ -115,7 +117,8 @@ function saveSearchedCities(cityName, cityString, lat, lon) {
       break;
     }
   }
-
+  // adds newest searched city to front of array, and removes last element if more than 9 cities remain in the history array.
+  // if the city was already searched, it deletes the city from the array, and adds it back to the beginning of the array, to keep most recent search at the top.
   if (!previouslySearched) {
     searchHistoryArray.unshift(newCityObject);
     if (searchHistoryArray.length > 9) {
@@ -129,6 +132,9 @@ function saveSearchedCities(cityName, cityString, lat, lon) {
   displaySearchHistory();
 }
 
+/**
+ * function to add one card for every city in the searchHistoryArray
+ */
 function displaySearchHistory() {
   searchHistoryDiv.innerText = '';
   // build out DOM elements for search history
@@ -143,6 +149,10 @@ function displaySearchHistory() {
   });
 }
 
+/**
+ * function to display the current weather pulled from the weather API.
+ * @param {object} weatherObj passed in from the weather API GET request
+ */
 function printCurrentWeather(weatherObj) {
   // build out DOM elements for current weather
   let todayCard = document.createElement('div');
@@ -183,6 +193,10 @@ function printCurrentWeather(weatherObj) {
   }
 }
 
+/**
+ * function to print one card for one day of the forecast.  Is called using a for loop to run once for each weatherObj for the next five day forecast.
+ * @param {object} weatherObj
+ */
 function printForecast(weatherObj) {
   // build out DOM elements for forecast
   let forecastCard = document.createElement('div');
@@ -225,7 +239,9 @@ function printForecast(weatherObj) {
 }
 
 /**
- *function takes timestamp in Unix time and returns formatted day, month, year for displaying to user.
+ * function to convert the unix timestamp and convert it to a format to display to the user
+ * @param {number} unixTime
+ * @returns formatted date string
  */
 function timeConverter(unixTime) {
   let jsTime = new Date(unixTime * 1000);
@@ -250,6 +266,8 @@ function timeConverter(unixTime) {
 }
 
 // Defines event listeners
+
+// adds event listener for the user input form.  Clears the user input after getting the data out of the form, then calls the getLatLon function
 submitBtn.addEventListener('click', function (event) {
   event.preventDefault();
   let formInput = searchText.value;
@@ -257,6 +275,7 @@ submitBtn.addEventListener('click', function (event) {
   getLatLon(formInput);
 });
 
+// adds event listener to the search history container.  Calls the getLatLon function if the inner text of the target is a city name
 searchHistoryDiv.addEventListener('click', function (event) {
   getLatLon(event.target.innerText);
 });
