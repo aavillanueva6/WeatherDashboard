@@ -27,7 +27,8 @@ function buildURL(lat, lon) {
 }
 
 /**
- * function to pull the current weather and forecast from api.openweathermap.org
+ * function to call the weather API for the user requested city
+ * @param {string} weatherAPIURL formatted string containing required parameters for the fetch call
  */
 function callWeatherAPI(weatherAPIURL) {
   fetch(weatherAPIURL)
@@ -35,13 +36,11 @@ function callWeatherAPI(weatherAPIURL) {
       return response.json();
     })
     .then(function (data) {
-      localStorage.setItem('weatherObj', JSON.stringify(data));
-      init();
-      forecastDiv.innerHTML = `<p>Five Day Forecast for ${currentCity}</p>`;
-      currentWeatherDiv.textContent = '';
-      printCurrentWeather(data.current);
+      forecastDiv.innerHTML = `<p>Five Day Forecast for ${currentCity}</p>`; // clears the results from the previous city search
+      currentWeatherDiv.textContent = ''; // clears the results from the previous city search
+      printCurrentWeather(data.current); // runs the printCurrentWeather function for the current weather from the data object
       for (let i = 1; i < 6; i++) {
-        printForecast(data.daily[i]);
+        printForecast(data.daily[i]); // runs the printForecast function for the five following days after the current day
       }
     })
     .catch(function (error) {
@@ -52,21 +51,17 @@ function callWeatherAPI(weatherAPIURL) {
 
 /**
  * function to pull the latitude and longitude of the user input city.
- * uses openweathermap geocoding API.  Defaults to Seattle
+ * @param {string} city city name input from user form
+ * calls buildURL and saveSearchedCities functions
  */
-function getLatLon(city, state, country) {
+function getLatLon(city) {
   let searchString = '';
+  // exits the function if the user did not provide an input in the form
   if (!city) {
     console.log('no city provided'); // add some message to user at this point, to handle the error
     return;
   }
-  if (!state) {
-    state = '';
-  }
-  if (!country) {
-    country = '';
-  }
-  searchString = `${city},${state},${country}`;
+  searchString = `${city},,`;
 
   let geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${searchString}&limit=1&appid=3eff72afc8e025ad160e5e93b1fd826d`;
   fetch(geoUrl)
@@ -74,7 +69,12 @@ function getLatLon(city, state, country) {
       return response.json();
     })
     .then(function (data) {
-      getCurrentCityString(data);
+      // if statement to build string that will be used to display the searched city and state or city and country to the user
+      if (data[0].state) {
+        currentCity = `${data[0].name}, ${data[0].state}:`;
+      } else {
+        currentCity = `${data[0].name}, ${data[0].country}:`;
+      }
       buildURL(data[0].lat, data[0].lon);
       saveSearchedCities(data[0].name, currentCity, data[0].lat, data[0].lon);
     })
@@ -85,14 +85,6 @@ function getLatLon(city, state, country) {
     });
 }
 
-function getCurrentCityString(data) {
-  if (data[0].state) {
-    currentCity = `${data[0].name}, ${data[0].state}:`;
-  } else {
-    currentCity = `${data[0].name}, ${data[0].country}:`;
-  }
-}
-
 /**
  * function to initialize the page.  Runs all necessary functions using default values.
  */
@@ -100,6 +92,13 @@ function init() {
   displaySearchHistory();
 }
 
+/**
+ *
+ * @param {string} cityName   saves the city name that the user searched
+ * @param {string} cityString   saves the cityString that is displayed to the user
+ * @param {string} lat  saves the city's latitude
+ * @param {string} lon  saves the city's longitude
+ */
 function saveSearchedCities(cityName, cityString, lat, lon) {
   let newCityObject = {
     city: cityName,
