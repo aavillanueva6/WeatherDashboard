@@ -63,7 +63,7 @@ function getLatLon(city) {
   }
   searchString = `${city},,`;
 
-  let geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${searchString}&limit=1&appid=3eff72afc8e025ad160e5e93b1fd826d`;
+  let geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${searchString}&limit=1&appid=3eff72afc8e025ad160e5e93b1fd826d`;
   fetch(geoUrl)
     .then(function (response) {
       return response.json();
@@ -93,7 +93,7 @@ function init() {
 }
 
 /**
- *
+ * function to save the recent search history to LS.
  * @param {string} cityName   saves the city name that the user searched
  * @param {string} cityString   saves the cityString that is displayed to the user
  * @param {string} lat  saves the city's latitude
